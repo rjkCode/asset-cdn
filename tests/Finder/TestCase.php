@@ -28,7 +28,7 @@ class TestCase extends \Arubacao\AssetCdn\Test\TestCase
 
 //        dd($actualFiles);
 
-        $this->assertArraySubset($expectedFiles, $actualFiles);
+        $this->assertEquals($expectedFiles, $actualFiles);
         $this->assertCount(count($expectedFiles), $actualFiles);
     }
 }
