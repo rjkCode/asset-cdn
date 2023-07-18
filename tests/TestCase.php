@@ -89,7 +89,8 @@ abstract class TestCase extends Orchestra
             ],
             'persist' => [
                 'extensions' => [
-                    '*.txt'
+                    '.txt',
+                    '_image.jpg',
                 ],
             ],
         ];

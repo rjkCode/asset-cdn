@@ -74,5 +74,6 @@ crashlytics-build.properties
 fabric.properties
 
 /composer.lock
+/.phpunit.result.cache
 /.php_cs.cache
 /coverage/

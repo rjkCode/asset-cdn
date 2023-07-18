@@ -135,13 +135,16 @@ class SyncCommand extends BaseCommand
             return ! in_array($fileOnCdn, $localFiles);
         });
 
-        // Remove any files that match exceptions matching extensions listed in config persist block
         if (! empty($persistConfiguration['extensions'])) {
-            foreach ($persistConfiguration['extensions'] as $extension) {
-                $filteredFiles = array_filter($array, function($file) use ($extension) {
-                    return ! str_ends_with($file, str_replace('*', '', $extension));
-                });
-            }
+            $endingsToExclude = $persistConfiguration['extensions'];
+            $filteredFiles = array_filter($array, function ($fileName) use ($endingsToExclude) {
+                foreach ($endingsToExclude as $ending) {
+                    if (str_ends_with($fileName, $ending)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
         } else {
             $filteredFiles = $array;
         }
