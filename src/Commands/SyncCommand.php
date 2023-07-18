@@ -46,12 +46,13 @@ class SyncCommand extends BaseCommand
     public function handle(Finder $finder, FilesystemManager $filesystemManager, Repository $config)
     {
         $this->filesystem = $config->get('asset-cdn.filesystem.disk');
+        $persistConfiguration = $config->get('asset-cdn.files.persist');
         $this->filesystemManager = $filesystemManager;
         $filesOnCdn = $this->filesystemManager
             ->disk($this->filesystem)
             ->allFiles();
         $localFiles = $finder->getFiles();
-        $filesToDelete = $this->filesToDelete($filesOnCdn, $localFiles);
+        $filesToDelete = $this->filesToDelete($filesOnCdn, $localFiles, $persistConfiguration);
         $filesToSync = $this->filesToSync($filesOnCdn, $localFiles);
 
         foreach ($filesToSync as $file) {
@@ -124,14 +125,27 @@ class SyncCommand extends BaseCommand
      * @param SplFileInfo[] $localFiles
      * @return string[]
      */
-    private function filesToDelete(array $filesOnCdn, array $localFiles): array
+    private function filesToDelete(array $filesOnCdn, array $localFiles, $persistConfiguration): array
     {
         $localFiles = $this->mapToPathname($localFiles);
+        $filteredFiles = [];
 
+        // Send any files on CDN that aren't on local filesystem to deletion array.
         $array = array_filter($filesOnCdn, function (string $fileOnCdn) use ($localFiles) {
             return ! in_array($fileOnCdn, $localFiles);
         });
 
-        return array_values($array);
+        // Remove any files that match exceptions matching extensions listed in config persist block
+        if (! empty($persistConfiguration['extensions'])) {
+            foreach ($persistConfiguration['extensions'] as $extension) {
+                $filteredFiles = array_filter($array, function($file) use ($extension) {
+                    return ! str_ends_with($file, str_replace('*', '', $extension));
+                });
+            }
+        } else {
+            $filteredFiles = $array;
+        }
+
+        return array_values($filteredFiles);
     }
 }

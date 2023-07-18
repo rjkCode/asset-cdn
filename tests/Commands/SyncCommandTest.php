@@ -23,6 +23,10 @@ class SyncCommandTest extends TestCase
                 'path' => 'css',
                 'filename' => 'back.css',
             ],
+            [
+                'path' => 'img',
+                'filename' => 'front.txt',
+            ],
         ]);
 
         $this->setFilesInConfig([
@@ -36,6 +40,7 @@ class SyncCommandTest extends TestCase
         $expectedFiles = [
             'js/back.app.js',
             'js/front.app.js',
+            'img/front.txt',
             'vendor/horizon/js/app.js',
             'vendor/horizon/js/app.js.map',
         ];

@@ -87,6 +87,11 @@ abstract class TestCase extends Orchestra
                 'extensions' => [],
                 'patterns' => [],
             ],
+            'persist' => [
+                'extensions' => [
+                    '*.txt'
+                ],
+            ],
         ];
 
         $files = array_merge_recursive($emptyConfig, $config);
